@@ -1,0 +1,12 @@
+const form=document.querySelector('#inquiry');
+const date=document.querySelector('#date');
+const today=new Date();
+const localDate=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+date.min=localDate;
+document.querySelectorAll('[data-service]').forEach(button=>button.addEventListener('click',()=>{document.querySelector('#service').value=button.dataset.service;document.querySelector('#appointment').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});document.querySelector('#name').focus({preventScroll:true});}));
+const dialog=document.querySelector('#confirmation');
+form.addEventListener('submit',event=>{event.preventDefault();if(!form.reportValidity())return;const name=document.querySelector('#name').value.trim();if(!name){document.querySelector('#name').setCustomValidity('Please enter a sample name.');document.querySelector('#name').reportValidity();return;}const chosenDate=new Date(date.value+'T12:00:00');document.querySelector('#confirmation-text').textContent=`${name}, your sample preference is ${document.querySelector('#service').value} on ${chosenDate.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}, ${document.querySelector('#period').value.toLowerCase()}. A live service would send this inquiry to hospital staff for confirmation.`;dialog.showModal();});
+document.querySelector('#name').addEventListener('input',event=>event.target.setCustomValidity(''));
+document.querySelector('#close-dialog').addEventListener('click',()=>dialog.close());
+document.querySelector('#done').addEventListener('click',()=>dialog.close());
+dialog.addEventListener('click',event=>{if(event.target===dialog){const bounds=dialog.getBoundingClientRect();if(event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom)dialog.close();}});
